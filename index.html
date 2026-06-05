@@ -183,7 +183,8 @@
     });
 
     document.getElementById('copyBtn').addEventListener('click', () => {
-      const text = document.getElementById('output').value;
+      const ta = document.getElementById('output');
+      const text = ta.value;
       if (!text) return;
 
       const btn = document.getElementById('copyBtn');
@@ -193,13 +194,16 @@
         setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
       };
 
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(onSuccess);
-      } else {
-        const ta = document.getElementById('output');
+      const fallback = () => {
         ta.select();
         document.execCommand('copy');
         onSuccess();
+      };
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(onSuccess).catch(fallback);
+      } else {
+        fallback();
       }
     });
   </script>
