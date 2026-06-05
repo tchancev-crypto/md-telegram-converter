@@ -2,7 +2,7 @@
 
 Converts Markdown formatting to Telegram-compatible HTML tags.
 
-**Live:** https://tchancev.github.io/md-telegram-converter/
+**Live:** https://tchancev-crypto.github.io/md-telegram-converter/
 
 | Markdown | Telegram HTML |
 |---|---|
