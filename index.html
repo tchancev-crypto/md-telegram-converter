@@ -211,20 +211,36 @@
     runTests();
 
     document.getElementById('convertBtn').addEventListener('click', () => {
-      const input = document.getElementById('input').value;
-      document.getElementById('output').value = convert(input);
+      const html = convert(document.getElementById('input').value);
+      document.getElementById('preview').innerHTML = html.replace(/\n/g, '<br>');
+      document.getElementById('output').value = html;
     });
 
-    document.getElementById('copyBtn').addEventListener('click', () => {
+    document.getElementById('copyFormattedBtn').addEventListener('click', () => {
+      const preview = document.getElementById('preview');
+      if (!preview.innerHTML) return;
+
+      const btn = document.getElementById('copyFormattedBtn');
+      const range = document.createRange();
+      range.selectNode(preview);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand('copy');
+      window.getSelection().removeAllRanges();
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy formatted'; }, 2000);
+    });
+
+    document.getElementById('copyHtmlBtn').addEventListener('click', () => {
       const ta = document.getElementById('output');
       const text = ta.value;
       if (!text) return;
 
-      const btn = document.getElementById('copyBtn');
+      const btn = document.getElementById('copyHtmlBtn');
 
       const onSuccess = () => {
         btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+        setTimeout(() => { btn.textContent = 'Copy HTML'; }, 2000);
       };
 
       const fallback = () => {
