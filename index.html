@@ -216,19 +216,23 @@
       document.getElementById('output').value = html;
     });
 
+    let copyFormattedTimer;
     document.getElementById('copyFormattedBtn').addEventListener('click', () => {
       const preview = document.getElementById('preview');
-      if (!preview.innerHTML) return;
+      if (!document.getElementById('output').value) return;
 
       const btn = document.getElementById('copyFormattedBtn');
       const range = document.createRange();
       range.selectNode(preview);
       window.getSelection().removeAllRanges();
       window.getSelection().addRange(range);
-      document.execCommand('copy');
+      const ok = document.execCommand('copy');
       window.getSelection().removeAllRanges();
-      btn.textContent = 'Copied!';
-      setTimeout(() => { btn.textContent = 'Copy formatted'; }, 2000);
+      if (ok) {
+        clearTimeout(copyFormattedTimer);
+        btn.textContent = 'Copied!';
+        copyFormattedTimer = setTimeout(() => { btn.textContent = 'Copy formatted'; }, 2000);
+      }
     });
 
     document.getElementById('copyHtmlBtn').addEventListener('click', () => {
