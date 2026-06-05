@@ -123,7 +123,59 @@
   </div>
 
   <script>
-    // conversion logic goes here (Task 2)
+    function convert(text) {
+      let out = text;
+
+      // 1. Links: [text](url) → <a href="url">text</a>
+      out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+
+      // 2. Bold: **text** → <b>text</b>
+      out = out.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+
+      // 3. Italic: *text* → <i>text</i>  (single asterisk, not touching **)
+      out = out.replace(/(?<!\*)\*(?!\*)([^*]+?)(?<!\*)\*(?!\*)/g, '<i>$1</i>');
+
+      // 4. Italic: _text_ only at word boundaries (not inside snake_case)
+      out = out.replace(/(^|[\s])_([^_]+?)_(?=[\s]|$)/gm, '$1<i>$2</i>');
+
+      // 5. Strikethrough: ~~text~~ → <s>text</s>
+      out = out.replace(/~~([^~]+)~~/g, '<s>$1</s>');
+
+      // 6. Inline code: `code` → <code>code</code>
+      out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+      // Paragraph spacing: blank lines preserved as-is (Telegram renders them with spacing)
+      // No transformation needed — \n\n is already in the string.
+
+      return out;
+    }
+
+    function runTests() {
+      const cases = [
+        { input: '[Click here](https://example.com)', expected: '<a href="https://example.com">Click here</a>' },
+        { input: '**bold text**',                     expected: '<b>bold text</b>' },
+        { input: '*italic text*',                     expected: '<i>italic text</i>' },
+        { input: 'before _italic_ after',             expected: 'before <i>italic</i> after' },
+        { input: 'some_snake_case',                   expected: 'some_snake_case' },
+        { input: '~~struck~~',                        expected: '<s>struck</s>' },
+        { input: '`inline code`',                     expected: '<code>inline code</code>' },
+        { input: 'line one\n\nline two',              expected: 'line one\n\nline two' },
+      ];
+
+      let passed = 0;
+      cases.forEach(({ input, expected }) => {
+        const result = convert(input);
+        if (result === expected) {
+          passed++;
+        } else {
+          console.error(`FAIL\n  input:    ${JSON.stringify(input)}\n  expected: ${JSON.stringify(expected)}\n  got:      ${JSON.stringify(result)}`);
+        }
+      });
+      console.log(`Tests: ${passed}/${cases.length} passed`);
+    }
+
+    runTests();
+
     // button wiring goes here (Task 3)
   </script>
 </body>
