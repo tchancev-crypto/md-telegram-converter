@@ -136,7 +136,7 @@
       out = out.replace(/(?<!\*)\*(?!\*)([^*]+?)(?<!\*)\*(?!\*)/g, '<i>$1</i>');
 
       // 4. Italic: _text_ only at word boundaries (not inside snake_case)
-      out = out.replace(/(^|[\s])_([^_]+?)_(?=[\s]|$)/gm, '$1<i>$2</i>');
+      out = out.replace(/(^|[^\w])_([^_]+?)_(?=[^\w]|$)/gm, '$1<i>$2</i>');
 
       // 5. Strikethrough: ~~text~~ → <s>text</s>
       out = out.replace(/~~([^~]+)~~/g, '<s>$1</s>');
@@ -160,6 +160,7 @@
         { input: '~~struck~~',                        expected: '<s>struck</s>' },
         { input: '`inline code`',                     expected: '<code>inline code</code>' },
         { input: 'line one\n\nline two',              expected: 'line one\n\nline two' },
+        { input: '(_italic_)',                        expected: '(<i>italic</i>)' },
       ];
 
       let passed = 0;
