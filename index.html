@@ -217,22 +217,35 @@
     });
 
     let copyFormattedTimer;
-    document.getElementById('copyFormattedBtn').addEventListener('click', () => {
-      const preview = document.getElementById('preview');
+    document.getElementById('copyFormattedBtn').addEventListener('click', async () => {
       if (!document.getElementById('output').value) return;
-
+      const preview = document.getElementById('preview');
       const btn = document.getElementById('copyFormattedBtn');
+
+      const succeed = () => {
+        clearTimeout(copyFormattedTimer);
+        btn.textContent = 'Copied!';
+        copyFormattedTimer = setTimeout(() => { btn.textContent = 'Copy formatted'; }, 2000);
+      };
+
+      if (navigator.clipboard && window.ClipboardItem) {
+        try {
+          await navigator.clipboard.write([new ClipboardItem({
+            'text/html': new Blob([preview.innerHTML], { type: 'text/html' }),
+            'text/plain': new Blob([preview.innerText], { type: 'text/plain' }),
+          })]);
+          succeed();
+          return;
+        } catch (e) { /* fall through */ }
+      }
+
       const range = document.createRange();
       range.selectNode(preview);
       window.getSelection().removeAllRanges();
       window.getSelection().addRange(range);
       const ok = document.execCommand('copy');
       window.getSelection().removeAllRanges();
-      if (ok) {
-        clearTimeout(copyFormattedTimer);
-        btn.textContent = 'Copied!';
-        copyFormattedTimer = setTimeout(() => { btn.textContent = 'Copy formatted'; }, 2000);
-      }
+      if (ok) succeed();
     });
 
     document.getElementById('copyHtmlBtn').addEventListener('click', () => {
